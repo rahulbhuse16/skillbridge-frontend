@@ -9,6 +9,7 @@ import {
   BarChart3,
   Eye,
   Layers,
+  Check,
 } from "lucide-react";
 
 import API from "../../api/axios";
@@ -23,111 +24,181 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"signup" | "role">("signup");
 
-  // ✅ Move to role step AFTER signup
+  const [selectedRole, setSelectedRole] = useState("");
+
+  // Move to role step after signup
   useEffect(() => {
     if (isSignedIn && user) {
       setStep("role");
     }
-    console.log('called',step)
-  }, [isSignedIn, user,isLoaded]);
+  }, [isSignedIn, user, isLoaded]);
 
-  const handleRegister = async (role: string) => {
+  const handleRegister = async () => {
     try {
-      if (!user) return;
+      if (!user || !selectedRole) return;
 
       setLoading(true);
 
       const payload = {
         clerkId: user.id,
-        role,
+        role: selectedRole,
         name: user.fullName || "User",
         email: user.primaryEmailAddress?.emailAddress,
       };
 
-      const res = await API.post("/auth/register", payload);
+      const res = await API.post(
+        "/auth/register",
+        payload
+      );
 
       const userData = {
         name: user.fullName,
-        role,
-        id:res.data?.data?.id
+        role: selectedRole,
+        id: res.data?.data?.id,
       };
 
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
-//@ts-ignore
-      navigate(getDashboardRoute(role));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(userData)
+      );
 
+      setUser(userData);
+
+      //@ts-ignore
+      navigate(getDashboardRoute(selectedRole));
     } catch (err) {
-      console.error("Register error:", err);
+      console.error("Register error:", err?.response?.data);
     } finally {
       setLoading(false);
     }
   };
 
   const roles = [
-    { label: "Student", role: "student", icon: GraduationCap, color: "bg-blue-500" },
-    { label: "Trainer", role: "trainer", icon: User, color: "bg-indigo-500" },
-    { label: "Institution", role: "institution", icon: Building2, color: "bg-green-500" },
-    { label: "Programme Manager", role: "manager", icon: BarChart3, color: "bg-purple-500" },
-    { label: "Monitoring Officer", role: "monitoring", icon: Eye, color: "bg-orange-500" },
+    {
+      label: "Student",
+      role: "student",
+      icon: GraduationCap,
+      color: "bg-blue-500",
+    },
+    {
+      label: "Trainer",
+      role: "trainer",
+      icon: User,
+      color: "bg-indigo-500",
+    },
+    {
+      label: "Institution",
+      role: "institution",
+      icon: Building2,
+      color: "bg-green-500",
+    },
+    {
+      label: "Programme Manager",
+      role: "manager",
+      icon: BarChart3,
+      color: "bg-purple-500",
+    },
+    {
+      label: "Monitoring Officer",
+      role: "officer",
+      icon: Eye,
+      color: "bg-orange-500",
+    },
   ];
 
-  if (!isLoaded) return <div className="text-center mt-10">Loading...</div>;
+  if (!isLoaded) {
+    return (
+      <div className="text-center mt-10">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-blue-100 px-4">
       <div className="w-full max-w-md">
-
-        {/* Header */}
-        
-
         <div className="bg-white rounded-2xl shadow-lg p-6">
+          {/* Header */}
           <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
-            <Layers size={20} />
-          </div>
-          <h2 className="text-2xl font-bold text-indigo-600">
-            SkillBridge
-          </h2>
-        </div>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+              <Layers size={20} />
+            </div>
 
-          {/* STEP 1: SIGNUP */}
+            <h2 className="text-2xl font-bold text-indigo-600">
+              SkillBridge
+            </h2>
+          </div>
+
+          {/* Signup */}
           {step === "signup" && (
             <SignUpButton
-             forceRedirectUrl={'/register'}
-              mode="modal">
+              forceRedirectUrl={"/register"}
+              mode="modal"
+            >
               <button className="w-full bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition">
                 Sign Up with Clerk
               </button>
             </SignUpButton>
           )}
 
-          {/* STEP 2: ROLE SELECTION */}
+          {/* Role Selection */}
           {step === "role" && (
             <>
-              <p className="text-center text-gray-500 mb-4">
-                Select your role to continue
+              <p className="text-center text-gray-500 mb-5">
+                Select your role
               </p>
 
               <div className="grid gap-3">
                 {roles.map((item) => {
                   const Icon = item.icon;
 
+                  const isSelected =
+                    selectedRole === item.role;
+
                   return (
                     <button
                       key={item.role}
-                      onClick={() => handleRegister(item.role)}
-                      disabled={loading}
-                      className="flex items-center gap-3 p-3 rounded-xl border hover:shadow-md transition"
+                      type="button"
+                      onClick={() =>
+                        setSelectedRole(item.role)
+                      }
+                      className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-all ${
+                        isSelected
+                          ? "border-indigo-500 bg-indigo-50"
+                          : "hover:shadow-md"
+                      }`}
                     >
-                      <div className={`p-2 rounded-lg text-white ${item.color}`}>
-                        <Icon size={18} />
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`p-2 rounded-lg text-white ${item.color}`}
+                        >
+                          <Icon size={18} />
+                        </div>
+
+                        <span>{item.label}</span>
                       </div>
-                      <span>{item.label}</span>
+
+                      {isSelected && (
+                        <Check
+                          size={18}
+                          className="text-indigo-600"
+                        />
+                      )}
                     </button>
                   );
                 })}
               </div>
+
+              {/* Create User Button */}
+              <button
+                disabled={!selectedRole || loading}
+                onClick={handleRegister}
+                className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading
+                  ? "Creating User..."
+                  : "Create User"}
+              </button>
             </>
           )}
 
