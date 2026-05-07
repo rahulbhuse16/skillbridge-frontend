@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import API from "../../api/axios";
 import { getUser } from "../../utils/roleRoutes";
+import { GiftIcon } from "lucide-react";
 
 export default function JoinBatch() {
   const { id } = useParams();
@@ -11,8 +11,7 @@ export default function JoinBatch() {
 
   const user = getUser();
 
-  const [message, setMessage] =
-    useState("Joining batch...");
+  
 
   const joinBatch = async () => {
     try {
@@ -25,26 +24,17 @@ export default function JoinBatch() {
         }
       );
 
-      setMessage(
-        "Batch joined successfully"
-      );
+      
 
       setTimeout(() => {
         navigate("/student");
       }, 1500);
     } catch (error: any) {
-      setMessage(
-        error?.response?.data?.message ||
-          "Failed to join batch"
-      );
+      
     }
   };
 
-  useEffect(() => {
-    if (user?.id) {
-      joinBatch();
-    }
-  }, []);
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-5">
@@ -53,9 +43,13 @@ export default function JoinBatch() {
           Batch Invitation
         </h1>
 
-        <p className="text-gray-600">
-          {message}
-        </p>
+        <button
+              onClick={joinBatch}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-sm"
+            >
+              <GiftIcon size={18} />
+              Accept Invite
+            </button>
       </div>
     </div>
   );
