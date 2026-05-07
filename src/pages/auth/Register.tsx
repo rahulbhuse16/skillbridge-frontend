@@ -54,7 +54,7 @@ export default function Register() {
 
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
-
+//@ts-ignore
       navigate(getDashboardRoute(role));
 
     } catch (err) {

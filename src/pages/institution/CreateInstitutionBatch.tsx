@@ -1,4 +1,4 @@
-import { Type, Layers, Building2 } from "lucide-react";
+import { Type, Layers} from "lucide-react";
 import { useState } from "react";
 import DashboardLayout from "../../layouts/DashBoardLayout";
 import API from "../../api/axios";

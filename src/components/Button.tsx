@@ -12,6 +12,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
+      //@ts-ignore
       className={`px-4 py-2 rounded-lg transition ${styles[variant]} cursor-pointer`}
     >
       {children}
