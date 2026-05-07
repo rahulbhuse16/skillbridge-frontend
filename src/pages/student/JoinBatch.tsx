@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import API from "../../api/axios";
 import { getUser } from "../../utils/roleRoutes";
-import { GiftIcon } from "lucide-react";
 
 export default function JoinBatch() {
   const { id } = useParams();
@@ -38,16 +37,15 @@ export default function JoinBatch() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-5">
-      <div className="bg-white border rounded-3xl shadow-sm p-8 max-w-md w-full text-center">
+      <div className="bg-white  rounded-3xl shadow-sm p-8 max-w-md w-full text-center">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
           Batch Invitation
         </h1>
 
         <button
               onClick={joinBatch}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-sm"
+              className="justify-center  items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-sm"
             >
-              <GiftIcon size={18} />
               Accept Invite
             </button>
       </div>
