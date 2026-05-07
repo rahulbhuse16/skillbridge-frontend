@@ -66,7 +66,7 @@ export default function Register() {
 
       //@ts-ignore
       navigate(getDashboardRoute(selectedRole));
-    } catch (err) {
+    } catch (err:any) {
       console.error("Register error:", err?.response?.data);
     } finally {
       setLoading(false);
