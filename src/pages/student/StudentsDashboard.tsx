@@ -26,7 +26,7 @@ export default function StudentDashboard() {
   const getDashboardData = async () => {
     try {
       const response = await API.get(
-        `/${user.id}/dashboard`
+        `/student/${user.id}/dashboard`
       );
 
       setSessions(response.data.data || []);
