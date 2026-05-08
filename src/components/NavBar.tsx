@@ -18,6 +18,7 @@ export default function Navbar() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const[batchid,setBatchid]=useState("")
 
   const navigate = useNavigate();
   const { signOut } = useClerk();
@@ -30,17 +31,19 @@ export default function Navbar() {
     localStorage.clear();
     navigate("/login");
   };
- 
-  const localStorageUser=getUser()
+
+  const localStorageUser = getUser()
   const fetchNotifications = async () => {
     try {
       setLoading(true);
 
-      const res1= await API.get(`/${localStorageUser.id}/student-batch`)
+      const res1 = await API.get(`/${localStorageUser.id}/student-batch`)
 
-      const data=res1.data.data
+      const data = res1.data.data
 
-      const batchId=data?.batch_id
+      const batchId = data?.batch_id
+
+      setBatchid(batchId)
 
       if (!batchId) return;
 
@@ -85,6 +88,25 @@ export default function Navbar() {
     };
   }, []);
 
+  const joinBatch = async () => {
+    try {
+      await API.post(
+        `/batches/join`,
+        {
+          role: "student",
+          student_id: user.id,
+          id : batchid
+        }
+      );
+
+      
+
+      setNotificationOpen(false)
+    } catch (error: any) {
+      
+    }
+  };
+
   return (
     <div className="h-14 bg-white flex items-center justify-between px-6 shadow-sm">
       {/* Left */}
@@ -111,64 +133,67 @@ export default function Navbar() {
       >
         {/* Notifications */}
         {
-          localStorageUser.role==="student" &&
-        
-        (<div className="relative">
-          <button
-            onClick={handleNotificationClick}
-            className="p-2 rounded-lg hover:bg-gray-100 transition relative"
-          >
-            <Bell size={18} className="text-gray-600" />
+          localStorageUser.role === "student" &&
 
-            {notifications.length > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            )}
-          </button>
+          (<div className="relative">
+            <button
+              onClick={handleNotificationClick}
+              className="p-2 rounded-lg hover:bg-gray-100 transition relative"
+            >
+              <Bell size={18} className="text-gray-600" />
 
-          {/* Notification Popup */}
-          {notificationOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
-              <div className="p-4 border-b">
-                <h2 className="font-semibold text-gray-800">
-                  Notifications
-                </h2>
-              </div>
+              {notifications.length > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              )}
+            </button>
 
-              <div className="max-h-96 overflow-y-auto">
-                {loading ? (
-                  <div className="p-4 text-sm text-gray-500">
-                    Loading...
-                  </div>
-                ) : notifications.length === 0 ? (
-                  <div className="p-4 text-sm text-gray-500">
-                    No notifications found
-                  </div>
-                ) : (
-                  notifications.map((item, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border-b hover:bg-gray-50 transition"
-                    >
-                      <p className="text-sm font-medium text-gray-800">
-                        {item.title || "Notification"}
-                      </p>
+            {/* Notification Popup */}
+            {notificationOpen && (
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                <div className="p-4 border-b">
+                  <h2 className="font-semibold text-gray-800">
+                    Notifications
+                  </h2>
+                </div>
 
-                      <p className="text-xs text-gray-500 mt-1">
-                        {item.message}
-                      </p>
-
-                      <p className="text-[10px] text-gray-400 mt-2">
-                        {new Date(
-                          item.createdAt
-                        ).toLocaleString()}
-                      </p>
+                <div className="max-h-96 overflow-y-auto">
+                  {loading ? (
+                    <div className="p-4 text-sm text-gray-500">
+                      Loading...
                     </div>
-                  ))
-                )}
+                  ) : notifications.length === 0 ? (
+                    <div className="p-4 text-sm text-gray-500">
+                      No notifications found
+                    </div>
+                  ) : (
+                    notifications.map((item, index) => (
+                      <div
+                        key={index}
+                        className="p-4 border-b hover:bg-gray-50 transition"
+                      >
+                        <p className="text-sm font-medium text-gray-800">
+                          {item.title || "Notification"}
+                        </p>
+
+                        <button
+                          onClick={joinBatch}
+                          className="justify-center  items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-sm"
+                        >
+                          Accept Invite
+                        </button>
+
+                        <p className="text-[10px] text-gray-400 mt-2">
+                          {new Date(
+                            item.createdAt
+                          ).toLocaleString()}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>)}
+            )}
+          </div>)}
 
         {/* User */}
         <div
