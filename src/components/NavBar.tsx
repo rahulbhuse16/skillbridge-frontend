@@ -79,6 +79,7 @@ export default function Navbar() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+    handleNotificationClick()
 
     return () => {
       document.removeEventListener(
