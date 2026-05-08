@@ -18,7 +18,7 @@ export default function Navbar() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const[batchid,setBatchid]=useState("")
+  const [batchid, setBatchid] = useState("")
 
   const navigate = useNavigate();
   const { signOut } = useClerk();
@@ -95,15 +95,15 @@ export default function Navbar() {
         {
           role: "student",
           student_id: user.id,
-          id : batchid
+          id: batchid
         }
       );
 
-      
+
 
       setNotificationOpen(false)
     } catch (error: any) {
-      
+
     }
   };
 
@@ -169,24 +169,53 @@ export default function Navbar() {
                     notifications.map((item, index) => (
                       <div
                         key={index}
-                        className="p-4 border-b hover:bg-gray-50 transition"
+                        className="group bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-300 mb-3"
                       >
-                        <p className="text-sm font-medium text-gray-800">
-                          {item.title || "Notification"}
-                        </p>
+                        {/* Top Section */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
 
-                        <button
-                          onClick={joinBatch}
-                          className="justify-center  items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-sm"
-                        >
-                          Accept Invite
-                        </button>
+                              <p className="text-sm sm:text-base font-semibold text-gray-800 break-words">
+                                {item.title || "Notification"}
+                              </p>
+                            </div>
 
-                        <p className="text-[10px] text-gray-400 mt-2">
-                          {new Date(
-                            item.createdAt
-                          ).toLocaleString()}
-                        </p>
+                            {item.message && (
+                              <p className="text-xs sm:text-sm text-gray-500 mt-2 leading-relaxed break-words">
+                                {item.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Bottom Section */}
+                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          {/* Date */}
+                          <p className="text-[11px] sm:text-xs text-gray-400">
+                            {new Date(item.createdAt).toLocaleString()}
+                          </p>
+
+                          {/* Button */}
+                          <button
+                            onClick={joinBatch}
+                            className="
+        w-full sm:w-auto
+        flex items-center justify-center gap-2
+        bg-gradient-to-r from-indigo-600 to-violet-600
+        hover:from-indigo-700 hover:to-violet-700
+        text-white text-sm font-medium
+        px-5 py-2.5
+        rounded-xl
+        shadow-sm hover:shadow-lg
+        active:scale-95
+        transition-all duration-200
+      "
+                          >
+                            Accept Invite
+                          </button>
+                        </div>
                       </div>
                     ))
                   )}
